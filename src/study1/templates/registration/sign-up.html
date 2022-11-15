@@ -1,0 +1,12 @@
+{% extends 'study_auth/base.html' %}
+{% block title %}Sign-up{% endblock %}
+{% block content %}
+<form method="POST">
+    {%  csrf_token %}
+    {{form}}
+    <a href="{% url 'login' %}">Already have an account?</a>
+    <button type="submit">Register</button>
+
+    {{form.errors}}
+</form>
+{% endblock %}

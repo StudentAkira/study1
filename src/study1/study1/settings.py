@@ -32,6 +32,8 @@ SECRET_KEY = keys['secret_django_key']
 DEBUG = True
 
 ALLOWED_HOSTS = []
+AUTH_USER_MODEL = 'study_auth.CustomUser'
+LOGIN_REDIRECT_URL = '/'
 
 
 # Application definition
@@ -43,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'study_auth'
 ]
 
 MIDDLEWARE = [
