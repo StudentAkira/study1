@@ -2,33 +2,20 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
-from .models import CustomUser
+from .models import CustomUser, Post
 
 
 class CustomUserCreationForm(UserCreationForm):
-    username = forms.CharField(
-        strip=False,
-        help_text='',
-    )
-
-    password1 = forms.CharField(
-        strip=False,
-        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
-        help_text='',
-    )
-
-    password2 = forms.CharField(
-        strip=False,
-        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
-        help_text='Repeate your password',
-    )
+    username = forms.CharField(strip=True,)
+    password1 = forms.CharField(strip=True, widget=forms.PasswordInput())
+    password2 = forms.CharField(strip=True, widget=forms.PasswordInput())
 
     class Meta:
         model = CustomUser
         fields = ['username', 'password1', 'password2']
 
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        if 'a' in username:
-            raise ValidationError('there is a in username')
-        return username
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content']

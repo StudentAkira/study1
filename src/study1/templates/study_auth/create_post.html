@@ -1,0 +1,11 @@
+{% extends 'study_auth/base.html' %}
+{% block title %}CREATE POST{% endblock %}
+{% block content %}
+<form method="POST">
+    {%  csrf_token %}
+    {{form}}
+    <button type="submit">CREATE</button>
+    {{form.title.error_message}}
+    {{form.content.error_message}}
+</form>
+{% endblock %}

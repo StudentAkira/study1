@@ -2,4 +2,15 @@
 {% block title %}Home page{% endblock %}
 {% block content %}
 <h1>Home page</h1>
+{% for post in posts %}
+    <h2 style="overflow-wrap: break-word">Title :: {{post.title}}; Author :: {{post.author.username}}</h2><br/>
+    <p style="overflow-wrap: break-word">{{post.content}}</p><br/>
+    {% if request.user == post.author %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <button type="submit" name="post_id" value="{{post.id}}">DELETE</button>
+        </form>
+    {% endif %}
+    <hr/>
+{% endfor %}
 {% endblock %}

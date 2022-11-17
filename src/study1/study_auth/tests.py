@@ -1,3 +1,3 @@
 from django.test import TestCase
 
-# Create your tests here.
+print(len('translatebc1q92xadetvvngcgu6cq9kfhd33flss7xch63wmrvbc1q92xadetvvngcgu6cq9kfhd33flss7xch63wmrvbc1q92xadetvvngcgu6cq9kfhd33flss7x'))

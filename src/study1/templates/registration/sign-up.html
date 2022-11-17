@@ -7,6 +7,6 @@
     <a href="{% url 'login' %}">Already have an account?</a>
     <button type="submit">Register</button>
 
-    {{form.errors}}
+    {{form.username.error_messages}}
 </form>
 {% endblock %}
