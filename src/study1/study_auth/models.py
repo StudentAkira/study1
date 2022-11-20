@@ -12,8 +12,8 @@ class Post(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=127)
     content = models.CharField(max_length=1023)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(editable=True, auto_now_add=True)
+    updated_at = models.DateTimeField(editable=True, auto_now=True)
     objects = models.Manager()
 
     def __str__(self):

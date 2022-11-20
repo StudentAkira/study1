@@ -3,12 +3,25 @@
 {% block content %}
 <h1>Home page</h1>
 {% for post in posts %}
-    <h2 style="overflow-wrap: break-word">Title :: {{post.title}}; Author :: {{post.author.username}}</h2><br/>
+
+    <h2 style="overflow-wrap: break-word">
+        CREATED AT :: {{post.created_at}}
+        Title :: {{post.title}};
+        Author :: {{post.author.username}}
+    </h2><br/>
     <p style="overflow-wrap: break-word">{{post.content}}</p><br/>
     {% if request.user == post.author %}
         <form action="" method="post">
             {% csrf_token %}
             <button type="submit" name="post_id" value="{{post.id}}">DELETE</button>
+            <input name="action_code" value="delete post" hidden />
+        </form>
+    {% endif %}
+    {% if request.user.is_staff %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <button type="submit" name="user_id" value="{{post.author.id}}">BAN USER</button>
+            <input name="action_code" value="ban user" hidden />
         </form>
     {% endif %}
     <hr/>

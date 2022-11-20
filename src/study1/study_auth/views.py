@@ -1,52 +1,44 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm, PostForm
-from .models import Post
+from .services import SignUpService, PostService, IndexService
 
 
 @login_required(login_url='/login')
+@permission_required('study_auth.view_post', login_url='logout')
 def index(request):
-    posts = Post.objects.select_related('author').all()
+    posts = PostService(request).get_all()
     if request.method == 'GET':
         return render(request, 'study_auth/home.html', {'posts': posts})
     if request.method == 'POST':
-        post = Post.objects.filter(id=request.POST.get('post_id')).first()
-        if post and post.author == request.user:
-            post.delete()
+        service = IndexService(request)
+        service.process()
     return render(request, 'study_auth/home.html', {'posts': posts})
 
 
-
 def sign_up(request):
-
     if request.method == 'GET':
+        if request.user.is_authenticated:
+            return redirect('/')
         form = CustomUserCreationForm()
         return render(request, 'registration/sign-up.html', {'form': form})
-
-    elif request.method == 'POST':
+    if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
+        service = SignUpService(request, form)
+        if service.sign_up():
             return redirect('/')
-        return render(
-            request,
-            'registration/sign-up.html',
-            {'form': form}
-        )
+        return render(request, 'registration/sign-up.html', {'form': form})
 
 
 @login_required(login_url='/login')
+@permission_required('study_auth.add_post', login_url='logout')
 def create_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.save()
-            return redirect('/')
-        return render(request, 'study_auth/create_post.html', {'form': form})
     if request.method == 'GET':
         form = PostForm()
+        return render(request, 'study_auth/create_post.html', {'form': form})
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        service = PostService(request, form)
+        if service.create_post():
+            return redirect('/')
         return render(request, 'study_auth/create_post.html', {'form': form})
