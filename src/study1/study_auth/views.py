@@ -9,7 +9,14 @@ from .services import SignUpService, PostService, IndexService, UserService
 def index(request):
     posts = PostService(request).get_all()
     if request.method == 'GET':
-        return render(request, 'study_auth/home.html', {'posts': posts})
+        return render(
+            request,
+            'study_auth/home.html',
+            {
+                'posts': posts,
+                'subscriptoions': request.user.subscriptions.all(),
+            }
+        )
     if request.method == 'POST':
         service = IndexService(request)
         service.process()
@@ -93,3 +100,32 @@ def subscribe(request, followed_user_id):
         service = UserService(request)
         service.subscribe(followed_user_id)
         return redirect('/')
+
+
+@login_required(login_url='sign-up')
+def subscriptions(request):
+    if request.method == 'GET':
+        service = UserService(request)
+        subscriptions = service.get_subscriptions()
+        print(subscriptions)
+        return render(
+            request,
+            'study_auth/subscriptions.html',
+            {
+                'subscriptions': subscriptions,
+            }
+        )
+
+
+@login_required(login_url='sign-up')
+def subscribers(request):
+    if request.method == 'GET':
+        service = UserService(request)
+        subscribers = service.get_subscribers()
+        return render(
+            request,
+            'study_auth/subscribers.html',
+            {
+                'subscribers': subscribers,
+            }
+        )

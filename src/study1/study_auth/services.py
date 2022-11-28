@@ -1,6 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.db.models import Count
+from django.db.models.lookups import Contains
 
 from .forms import CustomUserCreationForm, PostForm
 from .models import CustomUser, Post
@@ -29,13 +30,13 @@ class PostService:
 
     def get_all(self):
         return Post.objects.select_related('author')\
-            .filter(author__groups__name__in=['default'])
+            .filter(author__groups__name__in=['default'])\
 
     def create_post(self):
         if self._form.is_valid():
             post = self._form.save(commit=False)
             post.author = self._request.user
-            post.slug = 'post-'+post.title
+            post.slug = post.title
             post.save()
         return self._form.is_valid()
 
@@ -57,6 +58,9 @@ class UserService:
     def __init__(self, request, user_slug=None):
         self._request = request
         self.user_slug = user_slug
+
+    def get_all(self):
+        return CustomUser.objects.all()
 
     def get_user(self):
         user = CustomUser.objects.filter(slug=self.user_slug)
@@ -88,6 +92,15 @@ class UserService:
             return followed_user.subscriptions.count()
         except:
             pass
+
+    def get_subscriptions(self):
+        return self._request.user.subscriptions.all()
+
+    def get_subscribers(self):
+        subscribers = CustomUser.objects.\
+            prefetch_related('subscriptions').\
+            filter(subscriptions__id__contains=self._request.user.id)
+        return subscribers
 
 
 class IndexService:

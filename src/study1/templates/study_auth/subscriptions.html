@@ -1,0 +1,8 @@
+{% extends 'study_auth/base.html' %}
+{% block title %}SUBSCRIPTIONS{% endblock %}
+{% block content %}
+{% include 'study_auth/navbar.html' %}
+{% for subscription in subscriptions %}
+    <h2>NickName :: {{ subscription.username }}</h2><br/>
+{% endfor %}
+{% endblock %}

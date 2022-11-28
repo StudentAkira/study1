@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index, sign_up, create_post, user_page_view, post_view, subscribe
+from .views import index, sign_up, create_post, user_page_view, post_view, subscribe, subscriptions, subscribers
 
 urlpatterns = [
     path('', index, name='home'),
@@ -7,5 +7,7 @@ urlpatterns = [
     path('create-post', create_post, name='create_post'),
     path('user/<slug:user_slug>', user_page_view, name='user_page'),
     path('post/<slug:post_slug>', post_view, name='post_page'),
-    path('follow-user/<int:followed_user_id>', subscribe, name='subscribe')
+    path('follow-user/<int:followed_user_id>', subscribe, name='subscribe'),
+    path('subscriptions/', subscriptions, name='subscriptions'),
+    path('subscribers/', subscribers, name='subscribers'),
 ]
