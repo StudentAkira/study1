@@ -1,7 +1,18 @@
 {% extends 'study_auth/base.html' %}
-{% block title %}Home page{% endblock %}
+{% block title %}{{ user.username }}{% endblock %}
 {% block content %}
-<h1>Home page</h1>
+
+{% if request.user == user %}
+    <h1>MYPAGE</h1>
+    <a href="{% url 'create_post' %}">CREATE NEW POST</a>
+{% endif %}
+{% if request.user != user and not followed %}
+<form action="{% url 'subscribe' followed_user_id=user.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">FOLLOW USER</button>
+</form>
+{% endif %}
+<h1>FOLLOWERS :: {{ followers_count }}</h1>
 {% for post in posts %}
     <h2 style="overflow-wrap: break-word">
         CREATED AT :: {{post.created_at}}

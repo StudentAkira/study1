@@ -1,8 +1,6 @@
 {% extends 'study_auth/base.html' %}
-{% block title %}Home page{% endblock %}
+{% block title %}{{post.title}}{% endblock %}
 {% block content %}
-<h1>Home page</h1>
-{% for post in posts %}
     <h2 style="overflow-wrap: break-word">
         CREATED AT :: {{post.created_at}}
         Title :: {{post.title}};
@@ -24,5 +22,4 @@
         </form>
     {% endif %}
     <hr/>
-{% endfor %}
 {% endblock %}
