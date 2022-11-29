@@ -5,8 +5,13 @@ from django.db import models
 
 # Create your models here.
 class CustomUser(AbstractUser):
-    subscriptions = models.ManyToManyField('self', related_name='subscriptions', blank=True, null=True)
     slug = models.SlugField(unique=True, db_index=True)
+
+
+class Subscription(models.Model):
+    follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='follower')
+    followed = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='followed')
+    objects = models.Manager()
 
 
 class Post(models.Model):

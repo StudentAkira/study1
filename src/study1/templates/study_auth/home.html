@@ -18,6 +18,7 @@
                 <input name="action_code" value="delete post" hidden />
             </form>
         {% endif %}
+        {% include 'study_auth/follow-unfollow-buttons.html' %}
         {% if request.user.is_staff and request.user !=  post.author %}
             <form action="" method="post">
                 {% csrf_token %}

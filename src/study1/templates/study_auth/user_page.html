@@ -6,12 +6,7 @@
         <h1>MYPAGE</h1>
         <a href="{% url 'create_post' %}">CREATE NEW POST</a>
     {% endif %}
-    {% if request.user != user and not followed %}
-    <form action="{% url 'subscribe' followed_user_id=user.id %}" method="post">
-        {% csrf_token %}
-        <button type="submit">FOLLOW USER</button>
-    </form>
-    {% endif %}
+    {% include 'study_auth/follow-unfollow-buttons.html' %}
     <h1>FOLLOWERS :: {{ followers_count }}</h1><br/>
     <hr/><br/>
     <h1>POSTS :: </h1><br/>

@@ -1,10 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
-from django.db.models import Count
-from django.db.models.lookups import Contains
-
 from .forms import CustomUserCreationForm, PostForm
-from .models import CustomUser, Post
+from .models import CustomUser, Post, Subscription
 
 
 class SignUpService:
@@ -77,30 +74,47 @@ class UserService:
 
     def subscribe(self, followed_user_id):
         try:
-            following_user = self._request.user
-            followed_user = CustomUser.objects.filter(id=followed_user_id).first()
-            if followed_user != following_user:
-                following_user.subscriptions.add(followed_user)
+            follower = self._request.user
+            followed = CustomUser.objects.filter(id=followed_user_id).first()
+            Subscription.objects.create(
+                follower=follower,
+                followed=followed,
+            )
         except:
             return
 
-    def check_if_fllowed(self, user: CustomUser):
-        return self._request.user.subscriptions.contains(user)
-
-    def get_followers_count(self, followed_user: CustomUser):
+    def unsubscribe(self, unfollowed_user_id):
         try:
-            return followed_user.subscriptions.count()
+            follower = self._request.user
+            followed = CustomUser.objects.filter(id=unfollowed_user_id).first()
+            Subscription.objects.get(
+                follower=follower,
+                followed=followed,
+            ).delete()
+        except:
+            return
+
+
+    def check_if_fllowed(self, user: CustomUser):
+        return CustomUser.objects.prefetch_related('follower')\
+            .filter(follower__followed=user)\
+            .contains(self._request.user)
+
+    def get_followers_count(self):
+        try:
+            return CustomUser.objects.prefetch_related('follower')\
+            .filter(follower__followed=self._request.user)\
+            .count()
         except:
             pass
 
     def get_subscriptions(self):
-        return self._request.user.subscriptions.all()
+        return CustomUser.objects.prefetch_related('followed')\
+            .filter(followed__follower=self._request.user)
 
     def get_subscribers(self):
-        subscribers = CustomUser.objects.\
-            prefetch_related('subscriptions').\
-            filter(subscriptions__id__contains=self._request.user.id)
-        return subscribers
+        return CustomUser.objects.prefetch_related('follower')\
+            .filter(follower__followed=self._request.user)
 
 
 class IndexService:

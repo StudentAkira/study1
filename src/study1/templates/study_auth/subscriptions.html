@@ -4,5 +4,7 @@
 {% include 'study_auth/navbar.html' %}
 {% for subscription in subscriptions %}
     <h2>NickName :: {{ subscription.username }}</h2><br/>
+    <a href="{% url 'user_page' user_slug=subscription.slug%}">USER PAGE</a><br/>
+    <hr/>
 {% endfor %}
 {% endblock %}

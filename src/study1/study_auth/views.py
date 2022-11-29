@@ -9,12 +9,13 @@ from .services import SignUpService, PostService, IndexService, UserService
 def index(request):
     posts = PostService(request).get_all()
     if request.method == 'GET':
+        service = UserService(request)
         return render(
             request,
             'study_auth/home.html',
             {
                 'posts': posts,
-                'subscriptoions': request.user.subscriptions.all(),
+                'subscriptoions': service.get_subscriptions(),
             }
         )
     if request.method == 'POST':
@@ -57,7 +58,7 @@ def user_page_view(request, user_slug):
     if request.method == 'GET':
         service = UserService(request, user_slug)
         user = service.get_user()
-        followers_count = service.get_followers_count(user)
+        followers_count = service.get_followers_count()
         if user:
             posts = PostService(request).get_user_posts(user)
             followed = service.check_if_fllowed(user)
@@ -100,6 +101,15 @@ def subscribe(request, followed_user_id):
         service = UserService(request)
         service.subscribe(followed_user_id)
         return redirect('/')
+
+
+@login_required(login_url='sign-up')
+def unsubscribe(request, unfollowed_user_id):
+    if request.method == 'POST':
+        service = UserService(request)
+        service.unsubscribe(unfollowed_user_id)
+        return redirect('/')
+
 
 
 @login_required(login_url='sign-up')
