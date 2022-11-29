@@ -6,7 +6,17 @@
         <h1>MYPAGE</h1>
         <a href="{% url 'create_post' %}">CREATE NEW POST</a>
     {% endif %}
-    {% include 'study_auth/follow-unfollow-buttons.html' %}
+    {% if request.user != user and not followed %}
+        <form action="{% url 'subscribe' followed_user_id=user.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">FOLLOW USER</button>
+        </form>
+    {% elif request.user != user and followed  %}
+        <form action="{% url 'unsubscribe' unfollowed_user_id=user.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">UNFOLLOW USER</button>
+    </form>
+    {% endif %}
     <h1>FOLLOWERS :: {{ followers_count }}</h1><br/>
     <hr/><br/>
     <h1>POSTS :: </h1><br/>
@@ -32,12 +42,9 @@
                 <input name="action_code" value="ban user" hidden />
             </form>
         {% endif %}
-        {% if request.user != post.author and post.author not in subscriptoions %}
-        <form action="{% url 'subscribe' followed_user_id=post.author.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">FOLLOW USER</button>
-        </form>
-        {% endif %}
+
+        {% include 'study_auth/follow-unfollow-buttons.html' %}
+
         <hr/>
     {% endfor %}
 {% endblock %}

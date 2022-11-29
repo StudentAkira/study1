@@ -8,14 +8,16 @@ from .services import SignUpService, PostService, IndexService, UserService
 @permission_required('study_auth.view_post', login_url='logout')
 def index(request):
     posts = PostService(request).get_all()
+
+    for post in posts:
+        print(post.title, post.subscribed)
+
     if request.method == 'GET':
-        service = UserService(request)
         return render(
             request,
             'study_auth/home.html',
             {
                 'posts': posts,
-                'subscriptoions': service.get_subscriptions(),
             }
         )
     if request.method == 'POST':
@@ -109,7 +111,6 @@ def unsubscribe(request, unfollowed_user_id):
         service = UserService(request)
         service.unsubscribe(unfollowed_user_id)
         return redirect('/')
-
 
 
 @login_required(login_url='sign-up')

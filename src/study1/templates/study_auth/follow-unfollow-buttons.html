@@ -1,11 +1,11 @@
-{% if request.user != user and not followed %}
-    <form action="{% url 'subscribe' followed_user_id=user.id %}" method="post">
+{% if request.user != post.author and not post.subscribed %}
+    <form action="{% url 'subscribe' followed_user_id=post.author.id %}" method="post">
         {% csrf_token %}
         <button type="submit">FOLLOW USER</button>
     </form>
 {% endif %}
-{% if request.user != user and followed %}
-    <form action="{% url 'unsubscribe' unfollowed_user_id=user.id %}" method="post">
+{% if request.user != post.author and post.subscribed %}
+    <form action="{% url 'unsubscribe' unfollowed_user_id=post.author.id %}" method="post">
         {% csrf_token %}
         <button type="submit">UNFOLLOW USER</button>
     </form>

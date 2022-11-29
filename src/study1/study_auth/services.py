@@ -1,5 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
+from django.db.models import Q
+
 from .forms import CustomUserCreationForm, PostForm
 from .models import CustomUser, Post, Subscription
 
@@ -26,8 +28,10 @@ class PostService:
         self._request = request
 
     def get_all(self):
+        my_subscriptions = CustomUser.objects.prefetch_related('followed').filter(followed__follower=self._request.user)
+        print(my_subscriptions)
         return Post.objects.select_related('author')\
-            .filter(author__groups__name__in=['default'])\
+            .filter(author__groups__name__in=['default']).annotate(subscribed=Q(author__in=my_subscriptions))\
 
     def create_post(self):
         if self._form.is_valid():
@@ -76,6 +80,7 @@ class UserService:
         try:
             follower = self._request.user
             followed = CustomUser.objects.filter(id=followed_user_id).first()
+
             Subscription.objects.create(
                 follower=follower,
                 followed=followed,

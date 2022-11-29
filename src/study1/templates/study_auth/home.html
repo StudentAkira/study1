@@ -18,7 +18,6 @@
                 <input name="action_code" value="delete post" hidden />
             </form>
         {% endif %}
-        {% include 'study_auth/follow-unfollow-buttons.html' %}
         {% if request.user.is_staff and request.user !=  post.author %}
             <form action="" method="post">
                 {% csrf_token %}
@@ -26,12 +25,9 @@
                 <input name="action_code" value="ban user" hidden />
             </form>
         {% endif %}
-        {% if request.user != post.author and post.author not in subscriptoions %}
-        <form action="{% url 'subscribe' followed_user_id=post.author.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">FOLLOW USER</button>
-        </form>
-        {% endif %}
+
+        {% include 'study_auth/follow-unfollow-buttons.html' %}
+
         <hr/>
 {% endfor %}
 {% endblock %}
