@@ -2,6 +2,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.db.models import Q
 
+from .filters import PostFilter
 from .forms import CustomUserCreationForm, PostForm
 from .models import CustomUser, Post, Subscription
 
@@ -23,13 +24,22 @@ class SignUpService:
 
 
 class PostService:
+
     def __init__(self, request, form: PostForm = None):
         self._form = form
         self._request = request
 
-    def get_all(self):
+        self.filtrator = PostFilter(
+            request.GET,
+            queryset=self._get_all().prefetch_related('author__followed'),
+            request=request,
+        )
+
+    def get_filtered(self):
+        return self.filtrator.qs
+
+    def _get_all(self):
         my_subscriptions = CustomUser.objects.prefetch_related('followed').filter(followed__follower=self._request.user)
-        print(my_subscriptions)
         return Post.objects.select_related('author')\
             .filter(author__groups__name__in=['default']).annotate(subscribed=Q(author__in=my_subscriptions))\
 

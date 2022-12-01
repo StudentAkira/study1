@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect
+
+from .filters import PostFilter
 from .forms import CustomUserCreationForm, PostForm
 from .services import SignUpService, PostService, IndexService, UserService
 
@@ -7,23 +9,29 @@ from .services import SignUpService, PostService, IndexService, UserService
 @login_required(login_url='/login')
 @permission_required('study_auth.view_post', login_url='logout')
 def index(request):
-    posts = PostService(request).get_all()
-
-    for post in posts:
-        print(post.title, post.subscribed)
-
+    service = PostService(request)
+    filtrator = service.filtrator
+    posts = service.get_filtered()
     if request.method == 'GET':
         return render(
             request,
             'study_auth/home.html',
             {
                 'posts': posts,
+                'filter': filtrator,
             }
         )
     if request.method == 'POST':
         service = IndexService(request)
         service.process()
-    return render(request, 'study_auth/home.html', {'posts': posts})
+        return render(
+            request,
+            'study_auth/home.html',
+            {
+                'posts': posts,
+                'filter': filtrator,
+            }
+        )
 
 
 def sign_up(request):
@@ -118,7 +126,6 @@ def subscriptions(request):
     if request.method == 'GET':
         service = UserService(request)
         subscriptions = service.get_subscriptions()
-        print(subscriptions)
         return render(
             request,
             'study_auth/subscriptions.html',

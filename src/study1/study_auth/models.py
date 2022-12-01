@@ -1,9 +1,7 @@
-from django.contrib.auth.models import AbstractUser, User
-from django.core.validators import MaxLengthValidator
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-# Create your models here.
 class CustomUser(AbstractUser):
     slug = models.SlugField(unique=True, db_index=True)
 
@@ -15,13 +13,20 @@ class Subscription(models.Model):
 
 
 class Post(models.Model):
+
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, db_index=True)
-    title = models.CharField(max_length=127)
+    title = models.CharField(max_length=127, name='title')
     content = models.CharField(max_length=1023)
-    created_at = models.DateTimeField(editable=True, auto_now_add=True)
-    updated_at = models.DateTimeField(editable=True, auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     objects = models.Manager()
+
+    #custom validation example
+    """def clean(self):
+        if self.title.startswith('a'):
+            raise ValidationError({'title': 'unreal value'})"""
 
     def __str__(self):
         return self.title
