@@ -31,7 +31,7 @@ class PostService:
 
         self.filtrator = PostFilter(
             request.GET,
-            queryset=self._get_all().prefetch_related('author__followed'),
+            queryset=self._get_all(),
             request=request,
         )
 
