@@ -14,9 +14,7 @@ class SignUpService:
 
     def sign_up(self):
         if self._form.is_valid():
-            user = self._form.save(commit=False)
-            user.slug = user.username
-            user.save()
+            user = self._form.save()
             default_group = Group.objects.get(name='default')
             default_group.user_set.add(user)
             login(self._request, user)

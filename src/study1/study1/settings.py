@@ -27,7 +27,6 @@ with open('keys.json', 'r+') as keys_file:
     keys = json.loads(keys)
 
 SECRET_KEY = keys['secret_django_key']
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -46,6 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.vk',
 
     'study_auth'
 ]
@@ -77,6 +81,27 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 1
+# Provider specific settings
+
+SOCIALACCOUNT_PROVIDERS = {
+    'vk': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': keys['vk_app_id'],
+            'secret': keys['vk_app_secret'],
+            'key': keys['vk_app_key'],
+        }
+    }
+}
 
 WSGI_APPLICATION = 'study1.wsgi.application'
 
@@ -139,6 +164,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'yapakira82@gmail.com'
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = keys['gmail_smpt_login']
+EMAIL_HOST_PASSWORD = keys['gmail_smtp_password']
 EMAIL_PORT = 587
